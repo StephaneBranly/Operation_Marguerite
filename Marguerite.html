@@ -1,0 +1,264 @@
+​<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8" />
+		<title>Effet Marguerite</title>
+		<link rel="stylesheet" href="Ressources/Design.css" />
+		<meta name="description" content="" />
+		<meta name="keywords" content="" /> 
+	</head>
+	<body>
+	<div id='contenu'>
+	<header>
+		<div id='Les_notifications'>
+		</div>
+		<img src='Ressources/Branly.png'/>
+		<img src='Ressources/Logo-Op-Marguerite.png'/>
+		<img src='Ressources/Olympiades-Physique.png'/>
+		<p>Un projet réalisé par <b>Branly</b> Stéphane, <b>Azoulay</b> Laurie, <b>Chavalle</b> Juliette et <b>Leroy</b> Adrien</p>
+	</header>
+	<script src="Ressources/jquery.min.js"></script>
+	<script type="text/javascript">
+		
+		document.write("<div id='images_en_ligne'>");
+		document.write("<h1>Série de photos</h1>");
+		for(i=1; i<21;i++)
+		{
+			document.write("<img src='Serie/"+i+".jpg' alt='image"+i+"' title='Image numero "+i+"' id='numero"+i+"' class='image_serie' onClick='modifier_intervalle("+i+");'/>");
+		}
+		document.write("</div>");
+		
+		document.write("<div id='animateur_images'>");
+		document.write("<h1>Animation</h1>");
+		document.write("<div class='button'><input type='checkbox' name='button-animation' id='button-animation' onClick='verifyCheckBoxes();'/><label for='button-animation' class='button_label'></label></div>");
+		
+		document.write("<div id='emplacement_image'>");
+		for(i=1; i<21;i++)
+		{
+			document.write("<img src='Serie/"+i+".jpg' alt='image"+i+"' title='Image numero "+i+"' id='animation_numero"+i+"' class='image_animee' style='display:none;'/>");
+		}
+		document.write("<div id='progress_bar'><div id='pourcentage_avance'></div></div>");
+		document.write("</div>");
+		document.write("</div>");
+	</script>
+
+	<div id='emplacement_canvas'>
+		<div id='selection_traitement'>
+			<p>Début:</p>
+			<input type="number"  class='number_input' id='minimum_image' value='1' min='1' max='20'/>
+			<p>Fin:</p>
+			<input type="number" class='number_input' id='maximum_image' value='5' min='1' max='20'/>
+			<input type="button" class='button_validation' id='generer_image' value="Générer l'image" onClick='generer_image();'/>
+		</div>
+		<h1>Résultats finaux</h1>
+		<canvas id="myCanvas" width="4608" height="3072" style="border:1px solid #d3d3d3;"></canvas>
+		<p>Image en soustraction</p>
+		<canvas id="myCanvas4" width="4608" height="3072" style="border:1px solid #d3d3d3;"></canvas>
+		<p>Image inversée avec amplification des couleurs</p>
+		<p><canvas id="myCanvas2" width="4608" height="3072" style="border:1px solid #d3d3d3;"></canvas>
+		<canvas id="myCanvas3" width="4608" height="3072" style="border:1px solid #d3d3d3;"></canvas></p>
+	</div>
+	<script type="text/javascript">
+		$("#animation_numero1").css("display", "inline-block");
+		// INIT
+		var clic=0;
+		var i=0;
+		var c = document.getElementById("myCanvas"); // CANVAS DE FOND
+		var ctx = c.getContext("2d");
+		var img = document.getElementById("numero1");
+		ctx.drawImage(img, 0, 0);
+		var imgData = ctx.getImageData(0, 0, c.width, c.height);
+			
+		var c2 = document.getElementById("myCanvas2");
+		var ctx2 = c2.getContext("2d");
+		var img2 = document.getElementById("numero1");
+		ctx2.drawImage(img2, 0, 0);
+		var imgData2 = ctx2.getImageData(0, 0, c2.width, c2.height);
+		
+		var c3 = document.getElementById("myCanvas3");
+		var ctx3 = c3.getContext("2d");
+		var img3 = document.getElementById("numero1");
+		ctx3.drawImage(img3, 0, 0);
+		var imgData3 = ctx3.getImageData(0, 0, c3.width, c3.height);
+				
+		var c4 = document.getElementById("myCanvas4");
+		var ctx4 = c4.getContext("2d");
+		var img4 = document.getElementById("numero1");
+		ctx4.drawImage(img4, 0, 0);
+		var imgData4 = ctx4.getImageData(0, 0, c4.width, c4.height);
+			
+		var debut=parseInt(document.getElementById("minimum_image").value, 10);
+		var fin=parseInt(document.getElementById("maximum_image").value, 10);
+			
+		function generer_image() {
+			debut=parseInt(document.getElementById("minimum_image").value, 10);
+			fin=parseInt(document.getElementById("maximum_image").value, 10);
+			if(debut>=fin)
+			{
+				ecrireNotif("&#128165;", "Alerte", "L'intervalle selectionné ne convient pas !");
+			}
+			else{
+			ecrireNotif("&#59141;", "Traitement", "Le traitement peut durer un certain moment, merci de patienter");
+			setTimeout(animation, 500);
+			i=0;
+			c = document.getElementById("myCanvas"); // CANVAS DE FOND
+			ctx = c.getContext("2d");
+			img = document.getElementById("numero1");
+			ctx.drawImage(img, 0, 0);
+			imgData = ctx.getImageData(0, 0, c.width, c.height);
+			
+			for (y = 0; y < imgData.data.length; y += 4) {
+			imgData.data[y] = 0;
+			imgData.data[y+1] = 0;
+			imgData.data[y+2] = 0;
+			imgData.data[y+3] = 255;
+			}
+
+			
+			c3 = document.getElementById("myCanvas3");
+			ctx3 = c3.getContext("2d");
+			
+			c2 = document.getElementById("myCanvas2");
+			ctx2 = c2.getContext("2d");
+			
+			if(debut%2==1)
+			{
+				img2 = document.getElementById("numero"+(debut)+"");
+			}
+			else
+			{
+				img3 = document.getElementById("numero"+(debut)+"");
+			}
+				
+			ctx2.drawImage(img2, 0, 0);
+			imgData2 = ctx2.getImageData(0, 0, c2.width, c2.height);	
+				
+			ctx3.drawImage(img3, 0, 0);
+			imgData3 = ctx3.getImageData(0, 0, c3.width, c3.height);
+			
+			ctx.putImageData(imgData, 0, 0);
+			for(i=debut;i<(fin);i++)
+			{
+				if(i%2==1) // NOMBRE IMPAIR
+				{
+					c3 = document.getElementById("myCanvas3"); // NOUVELLE IMAGE
+					ctx3 = c3.getContext("2d");
+					img3 = document.getElementById("numero"+(i+1)+"");
+					ctx3.drawImage(img3, 0, 0);
+					imgData3 = ctx3.getImageData(0, 0, c3.width, c3.height);
+					for (y = 0; y < imgData.data.length; y += 4) {
+						imgData.data[y] = imgData.data[y] + (imgData3.data[y] - imgData2.data[y]);
+						imgData.data[y+1] = imgData.data[y+1] + (imgData3.data[y+1] - imgData2.data[y+1]);
+						imgData.data[y+2] = imgData.data[y+2] + (imgData3.data[y+2] - imgData2.data[y+2]);
+						imgData.data[y+3] = 255;
+					}
+				}
+				else  // NOMBRE PAIR
+				{
+					c2 = document.getElementById("myCanvas2"); // NOUVELLE IMAGE
+					ctx2 = c2.getContext("2d");
+					img2 = document.getElementById("numero"+(i+1)+"");
+					ctx2.drawImage(img2, 0, 0);
+					imgData2 = ctx2.getImageData(0, 0, c2.width, c2.height);
+					for (y = 0; y < imgData.data.length; y += 4) {
+						imgData.data[y] = imgData.data[y] + (imgData2.data[y] - imgData3.data[y]);
+						imgData.data[y+1] = imgData.data[y+1] + (imgData2.data[y+1] - imgData3.data[y+1]);
+						imgData.data[y+2] = imgData.data[y+2] + (imgData2.data[y+2] - imgData3.data[y+2]);
+						imgData.data[y+3] = 255;
+					}
+				}
+			}
+			ctx.putImageData(imgData, 0, 0);
+			for (y = 0; y < imgData4.data.length; y += 4) {
+				imgData4.data[y] =255 - (imgData.data[y]*10);
+				imgData4.data[y+1] = 255 - (imgData.data[y+1]*10);
+				imgData4.data[y+2] = 255 - (imgData.data[y+2]*10);
+				imgData4.data[y+3] = 255;
+			}
+			ctx4.putImageData(imgData4, 0, 0);
+			ecrireNotif("&#127748;", "Photo", "Opération terminée, résultat visible");
+			}
+		}
+		
+		
+		var actu=23;
+		function animation() {
+			if(actu==0)
+			{
+				$("#animation_numero"+(20)+"").css("display", "none");
+			}
+			actu++;
+			$("#animation_numero"+actu+"").css("display", "inline-block");
+			$("#animation_numero"+(actu-1)+"").css("display", "none");
+			
+			if(actu==20)
+			{
+				actu=0;
+			}
+			
+			if(actu<22)
+			{
+				document.getElementById("pourcentage_avance").style.width=(((actu-1)/19)*100)+"%";
+			
+				setTimeout(animation, 500); // La fonction anim() fait appel à elle-même si elle n'a pas terminé son travail
+			}
+			}
+		
+		
+		
+		function verifyCheckBoxes() {
+			if(document.getElementById("button-animation").checked == true)
+			{
+				actu=0;
+				animation();
+			}
+			else
+			{
+				for(i=2; i<21;i++)
+				{	
+					$("#animation_numero"+i+"").css("display", "none");
+				}
+				document.getElementById("pourcentage_avance").style.width=((0/19)*100)+"%";
+				$("#animation_numero"+1+"").css("display", "inline-block");
+				actu=23;
+			 }
+			}
+			
+		function effacer_notif(number_notif) {
+			document.getElementById("Les_notifications").removeChild(document.getElementById("notif"+number_notif+""));
+		}
+		function modifier_intervalle(image) {
+			if(clic==0)
+			{
+				debut=image;
+				document.getElementById("minimum_image").value=debut;
+				clic++;
+			}
+			else if(clic==1)
+			{
+				if(image<debut)
+				{
+					fin=debut;
+					debut=image;
+				}
+				else
+					fin=image;
+				document.getElementById("maximum_image").value=fin;
+				ecrireNotif("&#127748;", "Intervalle", "L'intervalle a été modifié : [ "+debut+" ; "+fin+" ]");
+				clic=0;
+			}
+			
+		}
+		var notif=0;
+		function ecrireNotif(icone,nom,description)
+		{
+			document.getElementById('Les_notifications').innerHTML = "<div class='Une_notification_msg' id='notif"+notif+"' onClick='effacer_notif("+notif+");' ><div class='Partie_g'><div class='Icone'>"+icone+"</div></div><div class='Partie_d'><h2>"+nom+"</h2><p>"+description+"</p></div></div></div>" + document.getElementById('Les_notifications').innerHTML;
+			notif++;
+		}
+		ecrireNotif("&#59160;", "Bienvenue", "Bienvenue dans le labo virtuel Marguerite");
+				
+	</script>
+
+</div>
+</body>
+</html>
